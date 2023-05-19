@@ -17,7 +17,7 @@ void main() {
 
     // TODO: verify initial widget state
 
-    await tester.tap(find.byIcon(Icons.post_add));
+    await tester.tap(find.byIcon(Icons.message));
     await tester.pump();
 
     // TODO: expect new post behaviour

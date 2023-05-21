@@ -26,12 +26,7 @@ class RelaysPage extends StatelessWidget {
                 'Connect to...',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
-              const TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'wss://'
-                ),
-              ),
+              const _ConnectToRelayControl(),
             ],
           ),
           const Divider(),
@@ -55,6 +50,42 @@ class RelaysPage extends StatelessWidget {
   }
 }
 
+class _ConnectToRelayControl extends StatefulWidget {
+  const _ConnectToRelayControl();
+
+  @override
+  State<_ConnectToRelayControl> createState() => _ConnectToRelayControlState();
+}
+
+class _ConnectToRelayControlState extends State<_ConnectToRelayControl> {
+  TextEditingController textController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          margin: const EdgeInsets.all(10.0),
+          child: TextFormField(
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: 'wss://'
+            ),
+            initialValue: 'wss://',
+            onChanged: (value) => textController.text = value,
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () =>
+            setState(() => Provider.of<RelaysModel>(context, listen: false)
+              .add(textController.text)),
+          child: const Text('Connect'),
+        ),
+      ],
+    );
+  }
+}
+
 class _ConnectedRelays extends StatelessWidget {
   const _ConnectedRelays();
 
@@ -72,8 +103,15 @@ class _ConnectedRelays extends StatelessWidget {
             title: Text('wss://relay.mystr.com'),
           ),
           itemBuilder: (context, index) {
-            return ListTile(
-              title: Text(relays.items[index]),
+            return Dismissible(
+              key: UniqueKey(),
+              direction: DismissDirection.endToStart,
+              onDismissed: (_) =>
+                Provider.of<RelaysModel>(context, listen: false)
+                  .remove(relays.items[index]),
+              child: ListTile(
+                title: Text(relays.items[index]),
+              ),
             );
           },
         );

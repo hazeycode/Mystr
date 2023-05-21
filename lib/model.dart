@@ -6,7 +6,7 @@ class ProfileModel extends ChangeNotifier {
 }
 
 class RelaysModel extends ChangeNotifier {
-  final Set<String> _items = {};
+  final Set<String> _items = {}; // TODO: populate with default relay endpoint
 
   List<String> get items => _items.toList();
 

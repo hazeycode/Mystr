@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
 
 import 'model.dart';
@@ -6,12 +7,17 @@ import 'main_page.dart';
 import 'profile_page.dart';
 import 'relays_page.dart';
 
-void main() {
+void main() async {
+  await GetStorage.init();
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ProfileModel()),
-        ChangeNotifierProvider(create: (context) => RelaysModel()),
+        ChangeNotifierProvider(create: (context) {
+            final Set<String> defaultRelays = {}; // TODO: Populate with default relay endpoint
+            final relays = Set<String>.from(GetStorage().read('relays') ?? defaultRelays);
+            return RelaysModel(relays);
+        }),
       ],
       child: const MystrApp(),
     )
@@ -34,7 +40,7 @@ class MystrApp extends StatelessWidget {
         '/': (context) => MainPage(),
         '/home': (context) => MainPage(),
         '/profile': (context) => const ProfilePage(),
-        '/relays': (context) => RelaysPage(),
+        '/relays': (context) => const RelaysPage(),
       },
     );
   }

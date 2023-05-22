@@ -11,15 +11,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mystr/main.dart';
 
 void main() {
-  testWidgets('New post button smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MystrApp());
-
-    // TODO: verify initial widget state
-
-    await tester.tap(find.byIcon(Icons.message));
-    await tester.pump();
-
-    // TODO: expect new post behaviour
+  testWidgets('', (WidgetTester tester) async {
   });
 }

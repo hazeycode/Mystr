@@ -31,14 +31,15 @@ class MystrApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Mystr',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       routes: {
-        '/': (context) => MainPage(),
-        '/home': (context) => MainPage(),
+        '/': (context) => const MainPage(),
+        '/home': (context) => const MainPage(),
         '/profile': (context) => const ProfilePage(),
         '/relays': (context) => const RelaysPage(),
       },

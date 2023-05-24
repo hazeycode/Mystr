@@ -34,9 +34,6 @@ dependencies:
   provider:
   web_socket_channel:
   nostr:
-    git:
-      url: https://github.com/hazeycode/dart-nostr.git
-      ref: error-handling
 
 
   # The following adds the Cupertino Icons font to your application.

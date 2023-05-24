@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:nostr/nostr.dart';
@@ -5,8 +6,15 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'model.dart';
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
   const MainPage({super.key});
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  OverlayEntry? _overlayEntry;
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +38,23 @@ class MainPage extends StatelessWidget {
       endDrawer: _SettingsPanel(),
       body: const _FeedView(),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          // TODO: display new post widget
+        onPressed: () {
+          _overlayEntry = OverlayEntry(
+            builder: (_) => BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+              child: Stack(
+                children: [
+                    GestureDetector(
+                      onTap: () => _overlayEntry?.remove(),
+                    ),
+                    _NewNoteWidget(dismiss: () => {
+                      _overlayEntry?.remove()
+                    }),
+                ],
+              ),
+            ),
+          );
+          Overlay.of(context).insert(_overlayEntry!);
         },
         tooltip: 'New post...',
         shape: const CircleBorder(),
@@ -186,6 +209,65 @@ class _FeedNoteWidget extends StatelessWidget {
               )
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NewNoteWidget extends StatefulWidget {
+  const _NewNoteWidget({required this.dismiss});
+
+  final Function() dismiss;
+
+  @override
+  State<_NewNoteWidget> createState() => _NewNoteWidgetState();
+}
+
+class _NewNoteWidgetState extends State<_NewNoteWidget> {  
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 60.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.background,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.primaryContainer,
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(10))
+        ),
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                TextButton(
+                  onPressed: widget.dismiss,
+                  child: const Text('Cancel'),
+                ),
+                const Spacer(),
+                ElevatedButton(
+                  onPressed: widget.dismiss, // TODO: send note before dismissing overlay
+                  child: const Text('Post'),
+                ),
+              ],
+            ),
+            Container(
+              margin: const EdgeInsets.only(top: 20),
+              child: Material(
+                child: TextFormField( // TODO: Fill vertical space with text field
+                  autofocus: true,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Type your note here...'
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
